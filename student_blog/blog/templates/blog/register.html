@@ -1,0 +1,242 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Register — Inkwell{% endblock %}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="h-screen flex overflow-hidden">
+
+    <!-- LEFT PANEL -->
+    <div class="hidden lg:flex w-1/2 bg-[#080f1a] relative overflow-hidden cursor-crosshair flex-col justify-between p-8"
+         id="panel">
+
+        <!-- base text layer -->
+        <div class="absolute inset-0 p-6 font-mono text-[11px] leading-[1.85] text-[#0d2137] break-words whitespace-pre-wrap overflow-hidden pointer-events-none"
+             id="base-layer"></div>
+
+        <!-- colour reveal layer -->
+        <div class="absolute inset-0 p-6 font-mono text-[11px] leading-[1.85] break-words whitespace-pre-wrap overflow-hidden pointer-events-none"
+             id="color-layer"
+             style="background:linear-gradient(135deg,#22d3ee,#6366f1,#a855f7,#10b981);
+                    -webkit-background-clip:text;
+                    background-clip:text;
+                    color:transparent;
+                    -webkit-mask-image:radial-gradient(circle 130px at var(--mx,-500px) var(--my,-500px),black 0%,black 25%,transparent 80%);
+                    mask-image:radial-gradient(circle 130px at var(--mx,-500px) var(--my,-500px),black 0%,black 25%,transparent 80%)">
+        </div>
+
+        <!-- glow layer -->
+        <div class="absolute inset-0 pointer-events-none"
+             id="glow-layer"
+             style="background:radial-gradient(circle 100px at var(--mx,-500px) var(--my,-500px),rgba(99,102,241,0.18) 0%,rgba(34,211,238,0.1) 50%,transparent 80%);
+                    mix-blend-mode:screen">
+        </div>
+
+        <!-- logo -->
+        <div class="relative z-10 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+            <span class="text-white font-bold text-lg tracking-tight">Inkwell</span>
+        </div>
+
+        <!-- bottom tagline -->
+        <div class="relative z-10 pb-4">
+            <div class="inline-block bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-3">
+                Student Blog Platform
+            </div>
+            <h3 class="text-slate-200 text-xl font-semibold mb-2 leading-snug" style="font-family:'Georgia',serif">
+                Your story deserves to be told
+            </h3>
+            <p class="text-slate-500 text-xs leading-relaxed">
+                Join hundreds of students already writing on Inkwell.
+            </p>
+        </div>
+
+    </div>
+    <!-- RIGHT PANEL -->
+    <div class="w-1/2 flex items-center justify-center px-6 relative" style="background-color:#fafafa">
+
+        <!-- dot grid pattern -->
+        <div class="absolute inset-0" style="background-image:radial-gradient(circle,#cbd5e1 1px,transparent 1px);background-size:24px 24px;opacity:0.5"></div>
+
+        <!-- fade edges -->
+        <div class="absolute inset-0" style="background:radial-gradient(ellipse at center,transparent 40%,#fafafa 100%)"></div>
+
+        <div class="w-full max-w-sm relative z-10">
+
+            <!-- heading -->
+            <div class="mb-6">
+                <h1 class="text-3xl text-slate-800 mb-1">Create account</h1>
+                <p class="text-slate-500 text-sm">Join Inkwell and start writing today</p>
+            </div>
+
+            <!-- form -->
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- username -->
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                        Username
+                    </label>
+                    <input
+                        type="text"
+                        name="username"
+                        required
+                        placeholder="Choose a username"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+
+                <!-- email -->
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="Enter your email"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+
+                <!-- password -->
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <input
+                            type="password"
+                            name="password1"
+                            id="password-field"
+                            required
+                            placeholder="Create a password"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all pr-12">
+                        <button
+                            type="button"
+                            onclick="togglePassword()"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-medium transition-all">
+                            show
+                        </button>
+                    </div>
+                </div>
+
+                <!-- confirm password -->
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                        Confirm Password
+                    </label>
+                    <input
+                        type="password"
+                        name="password2"
+                        required
+                        placeholder="Repeat your password"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+
+                <!-- submit -->
+                <button
+                    type="submit"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white py-3 rounded-xl text-sm font-semibold transition-all">
+                    Create account
+                </button>
+
+            </form>
+
+            <!-- divider -->
+            <div class="flex items-center gap-3 my-5">
+                <div class="flex-1 h-px bg-slate-200"></div>
+                <span class="text-slate-400 text-xs">or</span>
+                <div class="flex-1 h-px bg-slate-200"></div>
+            </div>
+
+            <!-- login link -->
+            <p class="text-center text-sm text-slate-500">
+                Already have an account?
+                <a href="{% url 'login' %}" class="text-indigo-600 hover:text-indigo-700 font-semibold transition-all">
+                    Sign in
+                </a>
+            </p>
+
+        </div>
+    </div>
+
+</div>
+<script>
+    const blogs = [
+        "Three things nobody tells you about your first year of college",
+        "How I finally stopped procrastinating — and what actually worked",
+        "Building my first real project from scratch",
+        "The day I almost dropped out and what changed my mind",
+        "Five Chrome extensions that saved my semester",
+        "What burnout actually feels like as a student",
+        "I spent 30 days journaling every night — here is what happened",
+        "How to study for exams when your brain refuses to cooperate",
+        "My honest review of learning to code while in college",
+        "Why I deleted Instagram for a month and what I learned",
+        "The productivity system that finally stuck for me",
+        "Lessons from failing my first technical interview",
+        "How I manage my mental health during exam season",
+        "What making my first app taught me about myself",
+        "The best decision I made in my second year of college",
+        "How to ask for help without feeling like a burden",
+        "I tracked my screen time for 30 days — the results scared me",
+        "Why side projects matter more than your GPA",
+        "How I went from failing to topping my class",
+        "The small habits that quietly changed my life this year",
+        "What I wish I knew before starting college",
+        "How to find your people in a new city",
+        "On feeling behind everyone else — and getting over it",
+    ];
+
+    function buildText() {
+        let t = '', c = 0;
+        while (c < 5000) {
+            const line = blogs[Math.floor(Math.random() * blogs.length)];
+            t += line + '   ·   ';
+            c += line.length + 7;
+        }
+        return t;
+    }
+
+    const panel      = document.getElementById('panel');
+    const baseLayer  = document.getElementById('base-layer');
+    const colorLayer = document.getElementById('color-layer');
+    const glowLayer  = document.getElementById('glow-layer');
+
+    const text = buildText();
+    baseLayer.textContent  = text;
+    colorLayer.textContent = text;
+
+    panel.addEventListener('mousemove', (e) => {
+        const rect = panel.getBoundingClientRect();
+        const x = (e.clientX - rect.left) + 'px';
+        const y = (e.clientY - rect.top)  + 'px';
+        colorLayer.style.setProperty('--mx', x);
+        colorLayer.style.setProperty('--my', y);
+        glowLayer.style.setProperty('--mx', x);
+        glowLayer.style.setProperty('--my', y);
+    });
+
+    panel.addEventListener('mouseleave', () => {
+        colorLayer.style.setProperty('--mx', '-500px');
+        colorLayer.style.setProperty('--my', '-500px');
+        glowLayer.style.setProperty('--mx', '-500px');
+        glowLayer.style.setProperty('--my', '-500px');
+    });
+
+    function togglePassword() {
+        const field = document.getElementById('password-field');
+        const btn   = event.currentTarget;
+        if (field.type === 'password') {
+            field.type = 'text';
+            btn.textContent = 'hide';
+        } else {
+            field.type = 'password';
+            btn.textContent = 'show';
+        }
+    }
+</script>
+
+{% endblock %}

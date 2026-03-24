@@ -1,0 +1,169 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Write — Inkwell{% endblock %}
+
+{% block content %}
+
+<div class="max-w-2xl mx-auto px-6 py-10">
+
+    <!-- page header -->
+    <div class="mb-8">
+        <h1 class="text-3xl text-slate-800 mb-1">
+            Write a new post
+        </h1>
+        <p class="text-slate-500 text-sm">
+            Share your thoughts with the Inkwell community
+        </p>
+    </div>
+
+    <!-- form card -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-8">
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- title -->
+            <div class="mb-6">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                    Title
+                </label>
+                <input
+                    type="text"
+                    name="title"
+                    required
+                    placeholder="Give your post a great title..."
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+            </div>
+
+            <!-- tags -->
+<div class="mb-6">
+    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+        Tags
+    </label>
+    <div class="flex flex-wrap gap-2">
+        {% for tag in tags %}
+        <label class="flex items-center gap-2 cursor-pointer">
+            <input
+                type="checkbox"
+                name="tags"
+                value="{{ tag.id }}"
+                {% if post and tag in post.tags.all %}checked{% endif %}
+                class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+            <span class="text-sm text-slate-600">{{ tag.name }}</span>
+        </label>
+        {% endfor %}
+    </div>
+    <p class="text-xs text-slate-400 mt-2">
+        Select all tags that apply to your post.
+    </p>
+</div>
+
+            <!-- thumbnail -->
+            <div class="mb-6">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                    Thumbnail
+                </label>
+                <div class="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-indigo-400 hover:bg-indigo-50/30 transition-all cursor-pointer"
+                     onclick="document.getElementById('thumbnail-input').click()">
+                    <div class="text-3xl mb-2">🖼️</div>
+                    <p class="text-sm text-slate-400">
+                        Drop an image here or
+                        <span class="text-indigo-500 font-semibold">browse</span>
+                    </p>
+                    <p class="text-xs text-slate-300 mt-1">PNG, JPG up to 5MB</p>
+                    <p class="text-xs text-indigo-500 mt-2 hidden" id="file-name"></p>
+                </div>
+                <input
+                    type="file"
+                    name="thumbnail"
+                    id="thumbnail-input"
+                    accept="image/*"
+                    class="hidden"
+                    onchange="showFileName(this)">
+            </div>
+
+            <!-- body -->
+            <div class="mb-6">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                    Content
+                </label>
+                <textarea
+                    name="body"
+                    rows="10"
+                    required
+                    placeholder="Start writing your post here..."
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none leading-relaxed">
+                </textarea>
+            </div>
+            <!-- divider -->
+            <div class="h-px bg-slate-100 my-6"></div>
+
+            <!-- publish/draft toggle -->
+            <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 mb-6">
+                <div>
+                    <p class="text-sm font-semibold text-slate-700" id="status-label">
+                        Publish immediately
+                    </p>
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        Toggle off to save as draft
+                    </p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input
+                        type="checkbox"
+                        name="status"
+                        id="status-toggle"
+                        value="published"
+                        checked
+                        class="sr-only peer"
+                        onchange="updateToggle(this)">
+                    <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 transition-all"></div>
+                    <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all peer-checked:translate-x-5"></div>
+                </label>
+            </div>
+
+            <!-- action buttons -->
+            <div class="flex items-center gap-3">
+                <a href="{% url 'home' %}"
+                   class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-500 hover:border-slate-300 hover:text-slate-700 transition-all">
+                    Cancel
+                </a>
+                <button
+                    type="submit"
+                    id="submit-btn"
+                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white py-2.5 rounded-xl text-sm font-semibold transition-all">
+                    Publish post
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- JavaScript -->
+<script>
+    function showFileName(input) {
+        const label = document.getElementById('file-name');
+        if (input.files && input.files[0]) {
+            label.textContent = input.files[0].name;
+            label.classList.remove('hidden');
+        }
+    }
+
+    function updateToggle(checkbox) {
+        const statusLabel = document.getElementById('status-label');
+        const submitBtn   = document.getElementById('submit-btn');
+        if (checkbox.checked) {
+            checkbox.value      = 'published';
+            statusLabel.textContent = 'Publish immediately';
+            submitBtn.textContent   = 'Publish post';
+        } else {
+            checkbox.value      = 'draft';
+            statusLabel.textContent = 'Save as draft';
+            submitBtn.textContent   = 'Save draft';
+        }
+    }
+</script>
+
+{% endblock %}

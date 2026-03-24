@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Inkwell{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+{% block navbar %}
+<nav class="bg-slate-900 border-b border-slate-800">
+    <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+
+        <a href="{% url 'home' %}" class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+            <span class="text-white font-bold text-lg">Inkwell</span>
+        </a>
+
+        <div class="flex items-center gap-1">
+            <a href="{% url 'home' %}"
+               class="text-slate-400 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-lg text-sm transition-all">
+                Home
+            </a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'post_create' %}"
+                   class="text-slate-400 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-lg text-sm transition-all">
+                    Write
+                </a>
+                <a href="{% url 'my_posts' %}"
+                   class="text-slate-400 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-lg text-sm transition-all">
+                    My Posts
+                </a>
+                <a href="{% url 'profile' user.username %}"
+                   class="text-slate-400 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-lg text-sm transition-all">
+                    Profile
+                </a>
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="text-slate-400 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-lg text-sm transition-all cursor-pointer">
+                        Logout
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}"
+                   class="text-slate-400 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-lg text-sm transition-all">
+                    Login
+                </a>
+                <a href="{% url 'register' %}"
+                   class="text-slate-400 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-lg text-sm transition-all">
+                    Sign up
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+</nav>
+{% endblock %}
+
+    {% if messages %}
+    <div class="max-w-5xl mx-auto w-full px-6 pt-4 space-y-2">
+        {% for message in messages %}
+        <div class="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium
+            {% if message.tags == 'success' %}bg-emerald-50 text-emerald-800 border border-emerald-200
+            {% elif message.tags == 'error' %}bg-red-50 text-red-800 border border-red-200
+            {% elif message.tags == 'warning' %}bg-amber-50 text-amber-800 border border-amber-200
+            {% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.remove()"
+                    class="opacity-40 hover:opacity-100 text-lg leading-none transition-all">
+                ×
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    <footer class="bg-slate-900 border-t border-slate-800 mt-auto">
+        <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between text-sm text-slate-500">
+            <span>Inkwell</span>
+            <span>Built with Django</span>
+        </div>
+    </footer>
+    {% endblock %}
+
+</body>
+</html>

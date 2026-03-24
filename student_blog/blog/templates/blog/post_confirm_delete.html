@@ -1,0 +1,43 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Delete Post — Inkwell{% endblock %}
+
+{% block content %}
+
+<div class="max-w-lg mx-auto px-6 py-20">
+    <div class="bg-white border border-slate-200 rounded-2xl p-8 text-center">
+
+        <!-- warning icon -->
+        <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-5">
+            <span class="text-red-500 text-2xl">!</span>
+        </div>
+
+        <h1 class="text-2xl text-slate-800 mb-2">Delete this post?</h1>
+        <p class="text-slate-500 text-sm mb-2">
+            You are about to delete:
+        </p>
+        <p class="text-slate-800 font-semibold text-sm mb-6">
+            "{{ post.title }}"
+        </p>
+        <p class="text-red-400 text-xs mb-8">
+            This action cannot be undone.
+        </p>
+
+        <div class="flex items-center justify-center gap-4">
+            <a href="{% url 'my_posts' %}"
+               class="px-6 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-500 hover:border-slate-300 hover:text-slate-700 transition-all">
+                Cancel
+            </a>
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit"
+                        class="px-6 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 active:scale-95 text-white text-sm font-semibold transition-all">
+                    Yes, delete it
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
