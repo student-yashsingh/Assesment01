@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}InkSpace — Student Blog Platform{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Live &amp; Publishing
+    </div>
+    <h1>Where Everyone<br><em>Voices</em> Live.</h1>
+    <p class="subtitle">Discover stories, ideas, and knowledge written by students. Join the community — read, write, and connect.</p>
+    {% if not user.is_authenticated %}
+    <div style="margin-top:1.75rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+      <a href="{% url 'register' %}" class="btn btn-primary" style="padding:.65rem 1.5rem;">
+        <i class="bi bi-stars"></i> Start Writing
+      </a>
+      <a href="{% url 'login' %}" class="btn btn-outline-light" style="padding:.65rem 1.5rem;">Sign In</a>
+    </div>
+    {% else %}
+    <div style="margin-top:1.75rem;">
+      <a href="{% url 'create_post' %}" class="btn btn-primary" style="padding:.65rem 1.5rem;">
+        <i class="bi bi-pencil-square"></i> Write New Post
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<div class="container" style="position:relative;z-index:1;">
+
+  <!-- TAG FILTER -->
+  {% if tags %}
+  <div class="tag-filter-bar">
+    <span class="tag-filter-bar__label"><i class="bi bi-funnel me-1"></i>Filter</span>
+    <a href="{% url 'home' %}" class="tag-badge {% if not active_tag %}active{% endif %}">✦ All</a>
+    {% for tag in tags %}
+    <a href="{% url 'tag_filter' tag.slug %}" class="tag-badge {% if active_tag.slug == tag.slug %}active{% endif %}"># {{ tag.name }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if active_tag %}
+  <div style="padding:1.25rem 0 0;display:flex;align-items:center;gap:.75rem;">
+    <span style="font-size:.82rem;color:var(--text3);">Showing posts tagged</span>
+    <span class="tag-badge active" style="font-size:.75rem;"># {{ active_tag.name }}</span>
+    <a href="{% url 'home' %}" style="font-size:.78rem;color:var(--text3);text-decoration:none;display:flex;align-items:center;gap:.25rem;transition:color .2s;" onmouseover="this.style.color='var(--accent2)'" onmouseout="this.style.color='var(--text3)'">
+      <i class="bi bi-x-circle"></i> Clear
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- STATS BAR -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0 0;font-size:.78rem;color:var(--text3);">
+    <span>{{ page_obj.paginator.count }} post{{ page_obj.paginator.count|pluralize }}</span>
+    {% if user.is_authenticated %}
+    <a href="{% url 'create_post' %}" style="color:var(--accent2);text-decoration:none;font-weight:700;font-size:.78rem;display:flex;align-items:center;gap:.3rem;">
+      <i class="bi bi-plus-circle"></i> New Post
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- BLOG GRID -->
+  {% if page_obj.object_list %}
+  <div class="blog-grid">
+    {% for post in page_obj %}
+    <article class="blog-card" style="animation-delay:{{ forloop.counter0 }}00ms">
+      <div class="blog-card__thumb-wrap">
+        <a href="{{ post.get_absolute_url }}">
+          {% if post.thumbnail %}
+          <img class="blog-card__thumb" src="{{ post.thumbnail.url }}" alt="{{ post.title }}">
+          {% else %}
+          <div class="blog-card__thumb-placeholder">
+            <span class="thumb-letter">{{ post.title|slice:":1" }}</span>
+          </div>
+          {% endif %}
+        </a>
+      </div>
+
+      <div class="blog-card__body">
+        {% if post.tags.all %}
+        <div class="blog-card__tags">
+          {% for tag in post.tags.all %}
+          <a href="{% url 'tag_filter' tag.slug %}" class="tag-badge"># {{ tag.name }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <h2 class="blog-card__title">
+          <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </h2>
+        <p class="blog-card__excerpt">{{ post.excerpt }}</p>
+
+        <div class="blog-card__meta">
+          {% if post.author.profile.profile_picture %}
+          <img src="{{ post.author.profile.profile_picture.url }}"
+               style="width:26px;height:26px;border-radius:50%;object-fit:cover;border:1px solid var(--border2);" alt="">
+          {% else %}
+          <span class="avatar-initials">{{ post.author.username|slice:":2"|upper }}</span>
+          {% endif %}
+          <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a>
+          <span class="meta-dot">·</span>
+          <span>{{ post.created_at|date:"M d, Y" }}</span>
+          <span class="meta-dot">·</span>
+          <span><i class="bi bi-chat" style="font-size:.7rem;"></i> {{ post.comments.count }}</span>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  <!-- PAGINATION -->
+  {% if page_obj.has_other_pages %}
+  <div class="pagination-wrap">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if active_tag %}&tag={{ active_tag.slug }}{% endif %}" class="page-link-btn">
+      <i class="bi bi-chevron-left"></i>
+    </a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if num == page_obj.number %}
+        <span class="page-link-btn current">{{ num }}</span>
+      {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+        <a href="?page={{ num }}{% if active_tag %}&tag={{ active_tag.slug }}{% endif %}" class="page-link-btn">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if active_tag %}&tag={{ active_tag.slug }}{% endif %}" class="page-link-btn">
+      <i class="bi bi-chevron-right"></i>
+    </a>
+    {% endif %}
+  </div>
+  <p style="text-align:center;font-size:.75rem;color:var(--text3);margin-top:-.5rem;">
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+  </p>
+  {% endif %}
+
+  {% else %}
+  <div class="empty-state">
+    <span class="empty-state__icon">✍️</span>
+    <h3>No posts yet</h3>
+    <p>Be the first to share your thoughts.</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'create_post' %}" class="btn btn-primary mt-4">Write the First Post</a>
+    {% else %}
+    <a href="{% url 'register' %}" class="btn btn-primary mt-4"><i class="bi bi-stars"></i> Join InkSpace</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

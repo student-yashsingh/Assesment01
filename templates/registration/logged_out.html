@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Logged Out — InkSpace{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-card__head">
+      <div class="auth-logo"><span class="brand-dot"></span>InkSpace</div>
+      <h2>See you soon! 👋</h2>
+      <p>You've been signed out successfully.</p>
+    </div>
+    <div class="auth-card__body" style="text-align:center;">
+      <p style="color:var(--text-muted);margin-bottom:1.75rem;font-family:var(--font-body);font-size:0.95rem;">
+        Thanks for being part of the InkSpace community.
+      </p>
+      <a href="{% url 'home' %}" class="btn btn-primary w-100 mb-2" style="padding:0.7rem;">
+        <i class="bi bi-house me-2"></i>Back to Feed
+      </a>
+      <a href="{% url 'login' %}" class="btn btn-outline-secondary w-100" style="padding:0.7rem;">
+        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In Again
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Sign In — InkSpace{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-card__head">
+      <div class="auth-logo">
+        <span class="brand-dot"></span>InkSpace
+      </div>
+      <h2>Welcome Back</h2>
+      <p>Sign in to continue writing</p>
+    </div>
+    <div class="auth-card__body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="flash-msg error" style="position:static;animation:none;margin-bottom:1.25rem;">
+          <i class="bi bi-x-circle-fill"></i>
+          {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.username.id_for_label }}">
+            <i class="bi bi-person me-1"></i>Username
+          </label>
+          {{ form.username }}
+          {% if form.username.errors %}
+          <ul class="errorlist">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label" for="{{ form.password.id_for_label }}">
+            <i class="bi bi-lock me-1"></i>Password
+          </label>
+          {{ form.password }}
+          {% if form.password.errors %}
+          <ul class="errorlist">{% for e in form.password.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
+
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn btn-primary w-100" style="padding:0.7rem;">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+        </button>
+      </form>
+
+      <div class="section-divider"></div>
+
+      <p style="text-align:center;font-size:0.82rem;color:var(--text-muted);">
+        Don't have an account?
+        <a href="{% url 'register' %}" style="color:var(--neon2);font-weight:700;text-decoration:none;">
+          Register Free <i class="bi bi-arrow-right"></i>
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
