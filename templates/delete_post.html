@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Delete Post — InkSpace{% endblock %}
+
+{% block content %}
+<div class="container" style="padding:4rem 1rem;">
+  <div class="delete-card">
+    <div style="font-size:3.5rem;margin-bottom:1.25rem;">🗑️</div>
+    <h2>Delete This Post?</h2>
+    <p style="color:var(--text-dim);font-family:var(--font-body);font-size:1rem;line-height:1.7;margin-bottom:0.75rem;">
+      You're about to permanently delete:
+    </p>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;text-align:left;">
+      <p style="font-weight:700;color:var(--text);font-size:1rem;margin:0;font-family:var(--font-display);">
+        "{{ post.title }}"
+      </p>
+      <p style="font-size:0.78rem;color:var(--text-muted);margin:0.35rem 0 0;font-family:var(--font-mono);">
+        Created {{ post.created_at|date:"F j, Y" }} · {{ post.comments.count }} comment{{ post.comments.count|pluralize }}
+      </p>
+    </div>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:2rem;">
+      This action <strong style="color:#f87171;">cannot be undone.</strong><br>
+      All comments on this post will also be permanently removed.
+    </p>
+    <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+      <form method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          <i class="bi bi-trash me-1"></i>Yes, Delete Forever
+        </button>
+      </form>
+      <a href="{{ post.get_absolute_url }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>No, Keep It
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

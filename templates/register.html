@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Create Account — InkSpace{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-card__head">
+      <div class="auth-logo">
+        <span class="brand-dot"></span>InkSpace
+      </div>
+      <h2>Join the Community</h2>
+      <p>Start writing and sharing your ideas</p>
+    </div>
+    <div class="auth-card__body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+          <div class="form-text">{{ field.help_text }}</div>
+          {% endif %}
+          {% if field.errors %}
+          <ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary w-100 mt-2" style="padding:0.7rem;">
+          <i class="bi bi-person-plus me-2"></i>Create Account
+        </button>
+      </form>
+      <div class="section-divider"></div>
+      <p style="text-align:center;font-size:0.82rem;color:var(--text-muted);">
+        Already have an account?
+        <a href="{% url 'login' %}" style="color:var(--neon2);font-weight:700;text-decoration:none;">
+          Sign In <i class="bi bi-arrow-right"></i>
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

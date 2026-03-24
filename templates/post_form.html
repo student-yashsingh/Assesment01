@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}{% if action == 'Edit' %}Edit Post{% else %}Write a Post{% endif %} — InkSpace{% endblock %}
+
+{% block content %}
+<section class="page-hero" style="padding:3.5rem 0 3rem;">
+  <div class="container">
+    <div class="hero-badge">
+      {% if action == 'Edit' %}<i class="bi bi-pencil"></i> Editing{% else %}<i class="bi bi-pencil-square"></i> New Post{% endif %}
+    </div>
+    <h1>{% if action == 'Edit' %}Edit Your Story{% else %}Write a New Story{% endif %}</h1>
+    <p class="subtitle">{% if action == 'Edit' %}Update and refine your article below.{% else %}Share your knowledge, thoughts, and ideas with the world.{% endif %}</p>
+  </div>
+</section>
+
+<div class="container" style="max-width:820px;padding-top:2.5rem;padding-bottom:4rem;position:relative;z-index:1;">
+  <div class="form-card">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <!-- TITLE -->
+      <div class="mb-4">
+        <label class="form-label" for="{{ form.title.id_for_label }}">
+          <i class="bi bi-type-h1 me-1"></i> Post Title
+        </label>
+        <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}"
+          class="form-control" placeholder="Give your story a compelling title..."
+          value="{{ form.title.value|default_if_none:'' }}"
+          style="font-family:'Instrument Serif',serif;font-size:1.4rem;padding:1rem 1.1rem!important;letter-spacing:-.01em;">
+        {% if form.title.errors %}<ul class="errorlist">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+
+      <!-- BODY -->
+      <div class="mb-4">
+        <label class="form-label" for="{{ form.body.id_for_label }}">
+          <i class="bi bi-body-text me-1"></i> Content
+        </label>
+        <textarea name="{{ form.body.html_name }}" id="{{ form.body.id_for_label }}"
+          class="form-control" rows="18"
+          placeholder="Write your story here... Share your ideas, experiences, and knowledge."
+          style="line-height:1.9;font-size:.95rem;">{{ form.body.value|default_if_none:'' }}</textarea>
+        {% if form.body.errors %}<ul class="errorlist">{% for e in form.body.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+
+      <div class="row g-3 mb-4">
+        <!-- TAGS -->
+        <div class="col-md-5">
+          <label class="form-label" for="{{ form.tags.id_for_label }}">
+            <i class="bi bi-tags me-1"></i> Tags
+          </label>
+          <input type="text" name="{{ form.tags.html_name }}" id="{{ form.tags.id_for_label }}"
+            class="form-control" placeholder="python, django, webdev..."
+            value="{{ form.tags.value|default_if_none:'' }}">
+          <div class="form-text">Comma-separated (e.g. python, web, tips)</div>
+          {% if form.tags.errors %}<ul class="errorlist">{% for e in form.tags.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+
+        <!-- STATUS -->
+        <div class="col-md-3">
+          <label class="form-label" for="{{ form.status.id_for_label }}">
+            <i class="bi bi-toggle-on me-1"></i> Status
+          </label>
+          <select name="{{ form.status.html_name }}" id="{{ form.status.id_for_label }}" class="form-select">
+            {% for val, label in form.status.field.choices %}
+            <option value="{{ val }}" {% if form.status.value == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <div class="form-text">Draft = private to you</div>
+        </div>
+
+        <!-- THUMBNAIL -->
+        <div class="col-md-4">
+          <label class="form-label" for="{{ form.thumbnail.id_for_label }}">
+            <i class="bi bi-image me-1"></i> Cover Image
+          </label>
+          {% if post and post.thumbnail %}
+          <div style="margin-bottom:.5rem;border-radius:8px;overflow:hidden;border:1px solid var(--border);">
+            <img src="{{ post.thumbnail.url }}" style="width:100%;height:70px;object-fit:cover;" alt="">
+          </div>
+          {% endif %}
+          <input type="file" name="{{ form.thumbnail.html_name }}" id="{{ form.thumbnail.id_for_label }}"
+            class="form-control" accept="image/*">
+          <div class="form-text">Optional cover photo</div>
+          {% if form.thumbnail.errors %}<ul class="errorlist">{% for e in form.thumbnail.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div style="display:flex;align-items:center;gap:.75rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+        <button type="submit" class="btn btn-primary" style="padding:.65rem 1.75rem;">
+          {% if action == 'Edit' %}
+          <i class="bi bi-check-lg"></i> Save Changes
+          {% else %}
+          <i class="bi bi-send"></i> Publish Post
+          {% endif %}
+        </button>
+        {% if post %}
+        <a href="{{ post.get_absolute_url }}" class="btn btn-outline-secondary">Cancel</a>
+        {% else %}
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Cancel</a>
+        {% endif %}
+        <span style="margin-left:auto;font-size:.75rem;color:var(--text3);">
+          <i class="bi bi-shield-lock me-1;"></i>Only you can see drafts
+        </span>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
